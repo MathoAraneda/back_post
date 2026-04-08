@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: back_post_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: matho_db
+      POSTGRES_PASSWORD: MathiusÑOL-=>5081
+      POSTGRES_DB: POST_DB
+    ports:
+      - "5442:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
