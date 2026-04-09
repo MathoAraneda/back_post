@@ -3,12 +3,17 @@ import {    TB_POST,
             db
  } from "../Entities/Entities.js";
 import { Salida } from "../utils.js";
-import { salidaAllPosts } from "./mappers/posts.js";
+import { salidaAddPost, salidaAllPosts } from "./mappers/posts.js";
+
+const allPosts = async() => {
+    const posts = await TB_POST.findAll();
+    return posts;
+}
 
 export const getPosts_Internal = async() => {
     const salida = new Salida();
     try {
-        const posts = await TB_POST.findAll();
+        const posts = await allPosts();
 
         salida.data = salidaAllPosts(posts);
         salida.codeNumber = 200;
@@ -84,7 +89,8 @@ export const addPost_Internal = async(base) => {
             }, { transaction: t });
         });
 
-        salida.data = nuevo;
+
+        salida.data = salidaAddPost(nuevo);
         salida.codeNumber = 201;
         salida.message = "Post creado correctamente";
         return salida;
@@ -120,6 +126,7 @@ export const deletePost_Internal = async(idpost) => {
             });
         });
 
+        salida.data = idpost;
         salida.codeNumber = 200;
         salida.message = "Post eliminado correctamente";
         return salida;
@@ -131,17 +138,20 @@ export const deletePost_Internal = async(idpost) => {
     }
 
 }
-    
+
+// si deja el filtro vacio, se envian todos los posts
 export const getPostByName_Internal = async(filtro) => {
     const salida = new Salida();
     try {
 
         let parametro = JSON.parse(filtro);
-        let _name = `${parametro.value}`.trimStart().trimEnd();
+        let _name = `${parametro.name}`.trimStart().trimEnd();
         if(_name.length === 0)
         {
-            salida.codeNumber = 400;
-            salida.message = "Nombre de post inválido";
+            const posts = await allPosts();
+            salida.data = salidaAllPosts(posts);
+            salida.codeNumber = 200;
+            salida.message = "Sin registros, pero se envian todos los posts";
             return salida;
         }
 
@@ -154,7 +164,7 @@ export const getPostByName_Internal = async(filtro) => {
         }
         else
         {
-            salida.data = post;
+            salida.data = salidaAllPosts([post]);
             salida.codeNumber = 200;
             salida.message = "ok";
         }

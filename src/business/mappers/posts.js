@@ -11,3 +11,11 @@ export const salidaAllPosts = (data) => {
     return _data;
 
 }
+
+export const salidaAddPost = (data) => {
+    return {
+        id: data.idpost,
+        Nombre: data.name,
+        Descripcion: data.description 
+    }
+}
