@@ -1,6 +1,7 @@
 import {    addPost_Internal, 
             deletePost_Internal, 
             getPostById_Internal, 
+            getPostByName_Internal, 
             getPosts_Internal 
         } from "../business/posts.js"
 
@@ -25,4 +26,10 @@ export const deletePost = async(req, res) => {
     const { id = 0} = req.params;
     const reponse = await deletePost_Internal(id);
     return res.status(reponse.codeNumber).json(reponse);   
+}
+
+export const getPostByName = async(req, res) => {
+    const {filtro} = req.query;
+    const reponse = await getPostByName_Internal(filtro);
+    return res.status(reponse.codeNumber).json(reponse);
 }

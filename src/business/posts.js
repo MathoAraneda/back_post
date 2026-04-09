@@ -132,3 +132,40 @@ export const deletePost_Internal = async(idpost) => {
 
 }
     
+export const getPostByName_Internal = async(filtro) => {
+    const salida = new Salida();
+    try {
+
+        let parametro = JSON.parse(filtro);
+        let _name = `${parametro.value}`.trimStart().trimEnd();
+        if(_name.length === 0)
+        {
+            salida.codeNumber = 400;
+            salida.message = "Nombre de post inválido";
+            return salida;
+        }
+
+        const post = await TB_POST.findOne({where: {name: _name}});
+        if(post === null)
+        {
+            salida.codeNumber = 404;
+            salida.message = "Post no encontrado";
+            salida.data = null;
+        }
+        else
+        {
+            salida.data = post;
+            salida.codeNumber = 200;
+            salida.message = "ok";
+        }
+
+        return salida;
+
+    } catch (error) {
+        salida.codeNumber = 500;
+        salida.message = "Error al buscar el post";
+        salida.error = `Error: ${error?.message}`;
+        return salida; 
+    }
+}
+    
